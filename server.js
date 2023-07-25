@@ -153,7 +153,7 @@ app.post("/agregarCaso", (req, res) => {
 });
 
 app.get("/visualizar", (req, res) => {
-  const sql = "SELECT * FROM abogados";
+  const sql = "SELECT * FROM abogados WHERE ocupacion = Abogado";
 
   db.query(sql, (err, result) => {
     if (err) {
@@ -363,7 +363,7 @@ app.get('/abogados/:idAbogados', (req, res) => {
 });
 
 app.get('/abogados', (req, res) => {
-  const sql = 'SELECT * FROM abogados WHERE ocupacion = Abogado';
+  const sql = 'SELECT * FROM abogados ';
   db.query(sql, (err, result) => {
     if (err) {
       return res.status(500).json('Error interno del servidor');
