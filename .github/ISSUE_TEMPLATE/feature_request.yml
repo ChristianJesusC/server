@@ -1,0 +1,79 @@
+name: Nueva funcionalidad
+description: Propón una mejora o una función nueva para la API
+title: "[Feature]: "
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Describe primero el problema que quieres resolver y después la solución propuesta.
+
+  - type: checkboxes
+    id: comprobaciones
+    attributes:
+      label: Comprobaciones previas
+      options:
+        - label: Busqué en los issues existentes y no encontré una propuesta igual.
+          required: true
+
+  - type: textarea
+    id: problema
+    attributes:
+      label: Problema o necesidad
+      description: ¿Qué no se puede hacer hoy o qué cuesta demasiado hacer?
+    validations:
+      required: true
+
+  - type: textarea
+    id: propuesta
+    attributes:
+      label: Propuesta
+      description: Describe la funcionalidad. Si afecta a un endpoint, indica método, ruta y cuerpo de la petición.
+      placeholder: |
+        Ej. GET /casos?estado=abierto para filtrar casos por estado.
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternativas
+    attributes:
+      label: Alternativas consideradas
+      description: Otras formas de resolverlo que descartaste y por qué.
+    validations:
+      required: false
+
+  - type: textarea
+    id: impacto
+    attributes:
+      label: Impacto en la base de datos
+      description: ¿Requiere cambios en tablas, columnas o índices? ¿Afecta a datos existentes?
+    validations:
+      required: false
+
+  - type: textarea
+    id: endpoints
+    attributes:
+      label: Endpoints afectados
+      description: Lista los endpoints nuevos o modificados (por ejemplo, `/abogados`, `/actualizarCaso/:idCasos`).
+    validations:
+      required: false
+
+  - type: dropdown
+    id: prioridad
+    attributes:
+      label: Prioridad
+      options:
+        - Alta
+        - Media
+        - Baja
+        - No sé
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: colaboracion
+    attributes:
+      label: Disposición a colaborar
+      options:
+        - label: Puedo implementar esta funcionalidad.
+        - label: Puedo revisar la propuesta.

@@ -1,0 +1,59 @@
+name: Documentación
+description: Señala documentación faltante, incorrecta o confusa
+title: "[Docs]: "
+labels: ["documentation"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Indica qué parte de la documentación de la API revisar y qué debería decir.
+
+  - type: dropdown
+    id: tipo
+    attributes:
+      label: Tipo de solicitud
+      options:
+        - Falta documentación
+        - Documentación incorrecta
+        - Documentación confusa o difícil de seguir
+        - Ejemplo de uso faltante
+        - Otro
+    validations:
+      required: true
+
+  - type: textarea
+    id: pagina
+    attributes:
+      label: Página, archivo o endpoint afectado
+      description: Ej. README, `server.js` línea 221 (`/conexion`), o la sección de instalación.
+    validations:
+      required: true
+
+  - type: textarea
+    id: que-falta
+    attributes:
+      label: Qué falta o qué es incorrecto
+      description: Describe el problema y, si puedes, cómo debería quedar.
+    validations:
+      required: true
+
+  - type: dropdown
+    id: audiencia
+    attributes:
+      label: Audiencia
+      description: ¿Quién necesita esta información?
+      options:
+        - Desarrolladores del equipo
+        - Personal que consume la API
+        - Administradores del servidor
+        - Otro
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: colaboracion
+    attributes:
+      label: Colaboración
+      options:
+        - label: Puedo escribir la corrección.
+        - label: Puedo revisar la corrección.

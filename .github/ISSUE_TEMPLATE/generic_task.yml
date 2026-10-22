@@ -1,0 +1,96 @@
+name: Tarea general
+description: Tareas de operaciones, seguridad, dependencias, calidad o cumplimiento
+title: "[Tarea]: "
+labels: ["task"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        **No pegues contraseñas, tokens, claves ni datos personales de clientes en este issue.**
+        Si necesitas compartir un secreto, indica dónde está (archivo y línea) y avisa al responsable para rotarlo.
+
+  - type: dropdown
+    id: categoria
+    attributes:
+      label: Categoría
+      options:
+        - General
+        - Seguridad / secreto expuesto
+        - Operaciones
+        - Cumplimiento
+        - Calidad
+        - Dependencias
+        - Otro
+    validations:
+      required: true
+
+  - type: input
+    id: resumen
+    attributes:
+      label: Resumen
+      description: Una frase.
+    validations:
+      required: true
+
+  - type: textarea
+    id: descripcion
+    attributes:
+      label: Descripción
+    validations:
+      required: true
+
+  - type: textarea
+    id: ubicacion
+    attributes:
+      label: Ubicación
+      description: Archivo, línea, endpoint, servicio o recurso afectado. Ej. `server.js` línea 12.
+    validations:
+      required: true
+
+  - type: dropdown
+    id: exposicion
+    attributes:
+      label: Exposición pública
+      description: ¿El problema es visible fuera del equipo (repo público, endpoint abierto, datos expuestos)?
+      options:
+        - Sí
+        - No
+        - No sé
+    validations:
+      required: true
+
+  - type: dropdown
+    id: urgencia
+    attributes:
+      label: Urgencia
+      options:
+        - Inmediata (hoy)
+        - Alta (esta semana)
+        - Media (este mes)
+        - Baja
+    validations:
+      required: true
+
+  - type: textarea
+    id: acciones-inmediatas
+    attributes:
+      label: Acciones inmediatas tomadas
+      description: ¿Ya se hizo algo (rotar una clave, revocar un acceso, cerrar un puerto)?
+    validations:
+      required: false
+
+  - type: input
+    id: responsable
+    attributes:
+      label: Responsable
+      description: Persona o equipo que se encarga. Déjalo vacío si no está claro.
+    validations:
+      required: false
+
+  - type: textarea
+    id: evidencia
+    attributes:
+      label: Evidencia
+      description: Logs, capturas o enlaces. Recuerda ocultar secretos antes de pegarlos.
+    validations:
+      required: false
