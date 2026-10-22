@@ -1,0 +1,111 @@
+name: Reporte de error
+description: Algo de la API no funciona como debería
+title: "[Bug]: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Gracias por reportar un error. Antes de enviarlo, revisa lo siguiente.
+
+  - type: checkboxes
+    id: comprobaciones
+    attributes:
+      label: Comprobaciones previas
+      options:
+        - label: Busqué en los issues existentes y no encontré uno igual.
+          required: true
+        - label: Reproduje el error con la última versión de `develop`.
+          required: true
+
+  - type: textarea
+    id: resumen
+    attributes:
+      label: Resumen
+      description: Describe el error en una o dos frases.
+      placeholder: Ej. /agregarCaso devuelve 500 cuando el campo fecha va vacío.
+    validations:
+      required: true
+
+  - type: textarea
+    id: pasos
+    attributes:
+      label: Pasos para reproducirlo
+      description: Incluye el endpoint, método HTTP y el cuerpo de la petición (sin datos reales de clientes).
+      placeholder: |
+        1. POST /agregarCaso con body { ... }
+        2. Ver la respuesta
+    validations:
+      required: true
+
+  - type: textarea
+    id: esperado
+    attributes:
+      label: Resultado esperado
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: Resultado actual
+      description: Incluye el código de estado y el mensaje de error si lo hay.
+    validations:
+      required: true
+
+  - type: dropdown
+    id: severidad
+    attributes:
+      label: Severidad
+      description: Bloqueante = impide usar la API o causa pérdida de datos.
+      options:
+        - Bloqueante
+        - Alta
+        - Media
+        - Baja
+        - No sé
+    validations:
+      required: true
+
+  - type: input
+    id: version
+    attributes:
+      label: Versión o commit
+      placeholder: Ej. develop @ 4895b7a
+    validations:
+      required: false
+
+  - type: textarea
+    id: entorno
+    attributes:
+      label: Entorno
+      description: Sistema operativo, versión de Node.js y si se ejecuta en local o en el servidor.
+      placeholder: |
+        - SO: Windows 11
+        - Node.js: 22.x
+        - Ejecución: local (puerto 8081)
+    validations:
+      required: false
+
+  - type: textarea
+    id: evidencia
+    attributes:
+      label: Evidencia
+      description: Capturas, logs de la consola o respuesta de la API. **No pegues contraseñas, tokens ni datos personales de clientes.**
+    validations:
+      required: false
+
+  - type: textarea
+    id: notas
+    attributes:
+      label: Notas adicionales
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: colaboracion
+    attributes:
+      label: Disposición a colaborar
+      options:
+        - label: Puedo probar una corrección cuando esté disponible.
+        - label: Puedo dar más detalles si el equipo los necesita.
