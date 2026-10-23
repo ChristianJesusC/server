@@ -43,7 +43,7 @@ body:
     id: ubicacion
     attributes:
       label: Ubicación
-      description: Archivo, línea, endpoint, servicio o recurso afectado. Ej. `server.js` línea 12.
+      description: Archivo, línea, endpoint, servicio o recurso afectado. Ej. `server.js` línea 218 (`/conexion`).
     validations:
       required: true
 

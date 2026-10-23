@@ -1,6 +1,6 @@
 name: Documentación
 description: Señala documentación faltante, incorrecta o confusa
-title: "[Docs]: "
+title: "[Documentación]: "
 labels: ["documentation"]
 body:
   - type: markdown
@@ -25,7 +25,7 @@ body:
     id: pagina
     attributes:
       label: Página, archivo o endpoint afectado
-      description: Ej. README, `server.js` línea 221 (`/conexion`), o la sección de instalación.
+      description: Ej. README, `server.js` línea 218 (`/conexion`), o la sección de instalación.
     validations:
       required: true
 

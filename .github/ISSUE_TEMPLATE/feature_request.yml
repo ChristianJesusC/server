@@ -1,12 +1,17 @@
 name: Nueva funcionalidad
 description: Propón una mejora o una función nueva para la API
-title: "[Feature]: "
+title: "[Mejora]: "
 labels: ["enhancement"]
 body:
   - type: markdown
     attributes:
       value: |
         Describe primero el problema que quieres resolver y después la solución propuesta.
+
+  - type: markdown
+    attributes:
+      value: |
+        **No pegues contraseñas, tokens ni datos personales de clientes en este issue.**
 
   - type: checkboxes
     id: comprobaciones
