@@ -8,7 +8,7 @@
 - [ ] Feat
 - [ ] Refactor
 - [ ] Docs
-- [ ] Chore / CI
+- [ ] Chore/CI
 - [ ] Perf
 - [ ] Test
 
@@ -51,11 +51,11 @@
 ## Checklist
 
 - [ ] Probado en local
-- [ ] Tests añadidos (o "No aplica")
+- [ ] Tests añadidos (si no aplica, indicarlo en Notas para el revisor)
 - [ ] `npm ci` y `node --check server.js` pasan
-- [ ] Documentación actualizada (o "No aplica")
+- [ ] Documentación actualizada (si no aplica, indicarlo en Notas para el revisor)
 - [ ] Issue vinculado con `closes #` o `refs #`
-- [ ] Plan de QA descrito arriba
+- [ ] Plan de QA descrito en Cómo probarlo
 
 ## Notas para el revisor
 

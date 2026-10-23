@@ -1,6 +1,6 @@
 name: Reporte de error
 description: Algo de la API no funciona como debería
-title: "[Bug]: "
+title: "[Error]: "
 labels: ["bug"]
 body:
   - type: markdown
@@ -15,7 +15,7 @@ body:
       options:
         - label: Busqué en los issues existentes y no encontré uno igual.
           required: true
-        - label: Reproduje el error con la última versión de `develop`.
+        - label: Reproduje el error con la última versión de `main` o `develop`, según corresponda.
           required: true
 
   - type: textarea
@@ -57,7 +57,7 @@ body:
     id: severidad
     attributes:
       label: Severidad
-      description: Bloqueante = impide usar la API o causa pérdida de datos.
+      description: "Bloqueante: impide usar la API o causa pérdida de datos. Alta: una función principal no funciona y no hay forma sencilla de evitarlo. Media: la función falla, pero hay una alternativa. Baja: problema cosmético o menor. No sé: no estás seguro."
       options:
         - Bloqueante
         - Alta
