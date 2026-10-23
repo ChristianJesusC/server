@@ -7,10 +7,10 @@ app.use(cors());
 app.use(express.json());
 
 const db = mysql.createConnection({
-  host: "garciasabogados.c8m3j4kqbjrp.us-east-2.rds.amazonaws.com",
-  user: "gerenteprincipal",
-  password: "abogadosgarcia123",
-  database: "Garcia_Abogados",
+  host: process.env.DB_HOST,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_NAME,
 });
 
 db.connect((err) => {
@@ -391,7 +391,7 @@ app.delete("/casos/:id", (req, res) => {
   });
 });
 
-const port = 8081;
+const port = process.env.SERVER_PORT;
 app.listen(port, () => {
   console.log(`Servidor escuchando en el puerto ${port}`);
 });

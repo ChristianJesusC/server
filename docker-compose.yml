@@ -1,0 +1,13 @@
+version: '3.8'
+
+services:
+  api:
+    build: .
+    container_name: node-api-rds
+    restart: unless-stopped
+    ports:
+      - "${SERVER_PORT:-8081}:${SERVER_PORT:-8081}"
+    env_file:
+      - .env
+    environment:
+      - SERVER_PORT=${SERVER_PORT:-8081}
