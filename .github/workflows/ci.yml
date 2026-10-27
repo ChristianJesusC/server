@@ -33,3 +33,45 @@ jobs:
 
       - name: Auditar dependencias (nivel alto)
         run: npm audit --audit-level=high
+
+  smoke:
+    name: Tests de humo
+    runs-on: ubuntu-latest
+    services:
+      db:
+        image: mariadb:10.11
+        env:
+          MARIADB_ROOT_PASSWORD: root
+          MARIADB_DATABASE: aboweb
+        ports:
+          - 3306:3306
+    env:
+      SERVER_PORT: 8000
+      DB_HOST: 127.0.0.1
+      DB_USER: root
+      DB_PASSWORD: root
+      DB_NAME: aboweb
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+
+      - name: Instalar dependencias
+        run: npm ci
+
+      - name: Cargar esquema
+        run: |
+          for i in $(seq 30); do mysqladmin ping -h127.0.0.1 -uroot -proot --silent && break; sleep 2; done
+          mysql -h127.0.0.1 -uroot -proot aboweb < tests/schema.sql
+
+      - name: Levantar la API
+        run: |
+          node server.js &
+          for i in $(seq 30); do curl -sf localhost:8000/abogados >/dev/null && exit 0; sleep 1; done
+          exit 1
+
+      - name: Tests de humo
+        run: npm test

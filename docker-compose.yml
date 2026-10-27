@@ -9,5 +9,7 @@ services:
       - "${SERVER_PORT:-8081}:${SERVER_PORT:-8081}"
     env_file:
       - .env
+    extra_hosts: #permite acceder a localhost a traves del alias host.docker.internal
+      - "host.docker.internal:host-gateway"
     environment:
       - SERVER_PORT=${SERVER_PORT:-8081}
