@@ -1,0 +1,9 @@
+CREATE TABLE IF NOT EXISTS abogados (
+    idAbogados INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(255) NOT NULL,
+    correo  VARCHAR(255) NOT NULL UNIQUE,
+    contraseña VARCHAR(255) NOT NULL,
+    apePat VARCHAR(255) NOT NULL,
+    apeMat VARCHAR(255) NOT NULL,
+    ocupacion VARCHAR(255) NOT NULL
+)
