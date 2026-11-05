@@ -2,7 +2,7 @@
 /**
  * @typedef {import("express").Request} Request
  * @typedef {import("express").Response} Response
- * @typedef {import('../../../../../core/http/controller.js').RequestController} Controller
+ * @typedef {HTTP.HTTPController} Controller
  */
 
 import GuardarAbogadoUseCase from "../../../application/guardarAbogadoUseCase.js";

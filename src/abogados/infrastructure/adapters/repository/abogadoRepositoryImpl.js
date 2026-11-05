@@ -1,7 +1,7 @@
 // @ts-check
-/** @typedef {import('../../../domain/abogado').Abogado} Abogado */
+/** @typedef {AbogadosDomain.Abogado} Abogado */
 /** @typedef {import('mysql2/promise').Connection} MySQLConnection */
-import { AbogadoRepository } from "../../../domain/abogadoRepository.js";
+/** @typedef {AbogadosDomain.Repository} AbogadoRepository */
 import { InfrastructureError } from "../../../../../core/errors/appError.js";
 import { EmailAlreadyRegisteredError } from "../../../domain/errors.js";
 
@@ -17,7 +17,7 @@ export class AbogadoRepositoryImpl {
     }
 
     /**
-     * @param {Abogado} abogado 
+     * @param {Required<Abogado>} abogado 
      */
     async saveNewAbogado(abogado) {
         try {
@@ -42,6 +42,20 @@ export class AbogadoRepositoryImpl {
             const sql = "SELECT * FROM abogados WHERE correo = ?";
             const [rows] = /** @type {[Abogado[], any]} */ (await this.dbconn.execute(sql, [email]));
             return rows[0] ?? null;
+        } catch (err) {
+            throw new InfrastructureError(err, "MYSQL");
+        }
+    }
+
+    /**
+     * @param {number} id 
+     */
+    async deleteById(id) {
+        try {
+            const updateCasosSql = "UPDATE Casos SET idAbogados = 0 WHERE idAbogados = ?";
+            const deleteAbogadoSql = "DELETE FROM abogados WHERE idAbogados = ?";
+            await this.dbconn.execute(updateCasosSql, [id]);
+            await this.dbconn.execute(deleteAbogadoSql, [id]);
         } catch (err) {
             throw new InfrastructureError(err, "MYSQL");
         }

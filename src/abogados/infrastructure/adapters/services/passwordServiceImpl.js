@@ -1,10 +1,9 @@
 // @ts-check
-import { PasswordService } from "../../../application/services/passwordService.js";
 import argon2 from "argon2";
 import { InfrastructureError } from "../../../../../core/errors/appError.js";
 
 /**
- * @implements {PasswordService}
+ * @implements {AbogadoServices.PasswordService}
  */
 export default class PasswordServiceImpl {
     /**

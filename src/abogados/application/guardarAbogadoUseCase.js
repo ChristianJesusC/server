@@ -1,8 +1,8 @@
 /**
- * @typedef {import("../domain/abogado.js").Abogado} Abogado
+ * @typedef {AbogadosDomain.Abogado} Abogado
+ * @typedef {AbogadosDomain.Repository} AbogadoRepository
+ * @typedef {AbogadoServices.PasswordService} PasswordService
  */
-import { AbogadoRepository } from "../domain/abogadoRepository.js";
-import { PasswordService } from "./services/passwordService.js";
 import { IncompleteLawyerError } from "../domain/errors.js";
 
 const REQUIRED = ["nombre", "apePat", "apeMat", "correo", "contraseña", "ocupacion"];
@@ -25,6 +25,6 @@ export default class GuardarAbogadoUseCase {
         if (missing.length) throw new IncompleteLawyerError(missing);
         const safePassword = await this.passwordService.generateSafePassword(abogado.contraseña);
         abogado.contraseña = safePassword;
-        await this.abogadoRepository.saveNewAbogado(abogado);
+        await this.abogadoRepository.saveNewAbogado(/** @type {Required<Abogado>} */ (abogado));
     }
 }

@@ -3,18 +3,19 @@ import jwt from "jsonwebtoken";
 import { InfrastructureError } from "../../../errors/appError.js";
 
 /**
- * @template T
- * @typedef {import('./port.js').TokenService<T>} TokenService
+ * @typedef {Services.Token.UserInfo} UserInfo
+ * @typedef {Services.Token.TokenService<UserInfo>} TokenService
  */
 
 const jwt_secret = /** @type {String} */ (process.env.JWT_SECRET);
 
 /**
- * @implements {TokenService<Object>}
+ * @template {UserInfo} T
+ * @implements {TokenService}
  */
 export class TokenServiceImpl {
     /**
-     * @param {Object} payload
+     * @param {T} payload
      */
     async generateToken(payload) {
         try {
@@ -33,7 +34,7 @@ export class TokenServiceImpl {
             
             return {
                 valid: true,
-                payload: /** @type {Object} */ (payload)
+                payload: /** @type {UserInfo} */ (payload)
             };
         } catch (error) {
             return { 

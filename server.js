@@ -1,5 +1,4 @@
 // @ts-check
-
 import express from "express";
 import cors from "cors";
 
@@ -9,6 +8,7 @@ import { initializeDatabase } from "./database/database.js";
 import { createAbogadoControllers } from "./src/abogados/infrastructure/composition.js";
 import { createAbogadoRouter } from "./src/abogados/infrastructure/http/router.js";
 import { TokenServiceImpl } from "./core/services/infrastructure/token/adapter.js";
+import { AuthMiddleware } from "./core/http/middleware/authMiddleware.js";
 
 if (!process.env.JWT_SECRET) {
     console.error("JWT_SECRET no está definido");
@@ -25,14 +25,23 @@ app.use(cors({
     origin: "*" //tmp
 }));
 
+app.use((req, res, next) => {
+    const metarequest = /** @type {HTTP.MetaRequest} */ (req);
+    metarequest.meta = {
+        user: {}
+    };
+    next();
+});
+
 initializeDatabase().then((dbconn) => {
     const tokenService = new TokenServiceImpl();
+    const authMiddleware = new AuthMiddleware(tokenService);
     const abogadoControllers = createAbogadoControllers(dbconn, tokenService);
 
     const abogadoRouter = createAbogadoRouter({
         guardarAbogadoController: abogadoControllers.guardarAbogadoController,
         autenticarAbogadoController: abogadoControllers.autenticarAbogadoController
-    }, (req, res) => {throw new Error("_______________")});
+    }, authMiddleware);
 
     app.use("/abogado", abogadoRouter);
 

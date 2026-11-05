@@ -1,14 +1,15 @@
+// @ts-check
+
 /**
- * @typedef {import("../domain/abogado.js").Abogado} Abogado
+ * @typedef {AbogadosDomain.Abogado} Abogado
+ * @typedef {AbogadosDomain.Repository} AbogadoRepository
  */
-import { AbogadoRepository } from "../domain/abogadoRepository.js";
-import { PasswordService } from "./services/passwordService.js";
 import { IncompleteLawyerError, InvalidCredentialsError } from "../domain/errors.js";
 
 export default class AutenticarAbogadoUseCase {
     /**
      * @param {AbogadoRepository} repository 
-     * @param {PasswordService} passwordService 
+     * @param {AbogadoServices.PasswordService} passwordService 
      */
     constructor(repository, passwordService) {
         this.repository = repository;
@@ -23,11 +24,11 @@ export default class AutenticarAbogadoUseCase {
     async run(email, password) {
         const missing = [["correo", email], ["contraseña", password]]
             .filter(([, v]) => typeof v !== "string" || v === "").map(([k]) => k);
-        if (missing.length) throw new IncompleteLawyerError(missing);
+        if (missing.length) throw new IncompleteLawyerError(/** @type {string[]} */ (missing));
 
         // mismo error para correo inexistente y contraseña incorrecta (evita enumerar usuarios)
         const abogado = await this.repository.getAbogadoByEmail(/** @type {string} */ (email));
-        if (!abogado || !(await this.passwordService.checkPassword(/** @type {string} */ (password), abogado.contraseña))) {
+        if (!abogado || !(await this.passwordService.checkPassword(/** @type {string} */ (password), /** @type {string} */ (abogado.contraseña)))) {
             throw new InvalidCredentialsError();
         }
         return abogado;

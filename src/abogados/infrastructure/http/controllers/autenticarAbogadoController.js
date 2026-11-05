@@ -2,8 +2,8 @@
 /**
  * @typedef {import("express").Request} Request
  * @typedef {import("express").Response} Response
- * @typedef {import('../../../../../core/http/controller.js').RequestController} Controller
- * @typedef {import('../../../../../core/services/infrastructure/token/port.js').TokenService<Object>} TokenService
+ * @typedef {HTTP.HTTPController} Controller
+ * @typedef {Services.Token.TokenService} TokenService
  */
 
 import AutenticarAbogadoUseCase from "../../../application/autenticarAbogadoUseCase.js";
@@ -29,7 +29,10 @@ export class AutenticarAbogadoController {
         const { correo, contraseña } = req.body;
         const abogado = await this.usecase.run(correo, contraseña);
         // payload mínimo: nunca firmar el hash de la contraseña dentro del JWT
-        const token = await this.tokenservice.generateToken({ idAbogados: abogado.idAbogados, correo: abogado.correo });
+        const token = await this.tokenservice.generateToken({
+            id: /** @type {number} */ (abogado.idAbogados),
+            email: abogado.correo
+        });
         res.setHeader("auth-token", token);
         res.status(200).send({
             message: "abogado autenticado con exito"
