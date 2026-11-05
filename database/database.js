@@ -11,6 +11,10 @@ const casosMigration = fs.readFileSync(path.resolve(migrationspath, "casosTable.
     encoding: "utf-8"
 });
 
+const clienteMigration = fs.readFileSync(path.resolve(migrationspath, "clienteTable.sql"), {
+    encoding: "utf-8"
+});
+
 export async function initializeDatabase() {
     const dbconnection = await mysql2.createPool({
         host: process.env.DB_HOST,
@@ -27,6 +31,9 @@ export async function initializeDatabase() {
 
     await dbconnection.execute(casosMigration);
     await dbconnection.execute("ALTER TABLE Casos MODIFY idCasos INT NOT NULL AUTO_INCREMENT");
+
+    await dbconnection.execute(clienteMigration);
+    await dbconnection.execute("ALTER TABLE cliente MODIFY idCliente INT NOT NULL AUTO_INCREMENT");
 
     return dbconnection;
 }

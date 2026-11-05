@@ -10,6 +10,8 @@ import { createAbogadoControllers } from "./src/abogados/infrastructure/composit
 import { createAbogadoRouter } from "./src/abogados/infrastructure/http/router.js";
 import { createCasoControllers } from "./src/casos/infrastructure/composition.js";
 import { createCasoRouter } from "./src/casos/infrastructure/http/router.js";
+import { createClienteControllers } from "./src/clientes/infrastructure/composition.js";
+import { createClienteRouter } from "./src/clientes/infrastructure/http/router.js";
 import { TokenServiceImpl } from "./core/services/infrastructure/token/adapter.js";
 import { AuthMiddleware } from "./core/http/middleware/authMiddleware.js";
 
@@ -53,6 +55,8 @@ initializeDatabase().then((dbconn) => {
     app.use("/abogado", abogadoRouter);
 
     app.use("/caso", createCasoRouter(createCasoControllers(dbconn), authMiddleware));
+
+    app.use("/cliente", createClienteRouter(createClienteControllers(dbconn), authMiddleware));
 
     app.use((req, res, next) => next(new NotFoundError("ROUTE_NOT_FOUND", "Ruta no encontrada")));
 

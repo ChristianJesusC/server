@@ -69,19 +69,23 @@ test("casos: requiere token y CRUD + búsqueda parametrizada", async () => {
   const token = login.headers.get("auth-token");
   const idAbogados = login.body.payload.idAbogados;
 
-  assert.equal((await req("POST", "/caso", { idAbogados, idCliente: 1 }, token)).status, 400);
+  const idCliente = (await req("POST", "/cliente", { Nombre: "c", apePat: "c", apeMat: "c" }, token)).body.payload.idCliente;
+  assert.equal((await req("POST", "/caso", { idAbogados, idCliente }, token)).status, 400);
+  const sinCliente = await req("POST", "/caso", { Titulo: "x", idAbogados, idCliente: 999999999 }, token);
+  assert.equal(sinCliente.status, 400);
+  assert.equal(sinCliente.body.error.details[0].issue, "not_found");
 
   const titulo = `smoke-caso-${Date.now()}`;
-  const nuevo = await req("POST", "/caso", { Titulo: titulo, idAbogados, idCliente: 1, Descripcion: "d" }, token);
+  const nuevo = await req("POST", "/caso", { Titulo: titulo, idAbogados, idCliente, Descripcion: "d" }, token);
   assert.equal(nuevo.status, 201);
   const id = nuevo.body.payload.idCasos;
 
   assert.equal((await req("GET", `/caso/id/${id}`, undefined, token)).body.payload.Titulo, titulo);
   assert.equal((await req("GET", "/caso/id/abc", undefined, token)).status, 400);
 
-  const upd = await req("PUT", `/caso/id/${id}`, { Titulo: `${titulo}-mod`, idCliente: 1 }, token);
+  const upd = await req("PUT", `/caso/id/${id}`, { Titulo: `${titulo}-mod`, idCliente }, token);
   assert.equal(upd.status, 200);
-  assert.equal((await req("PUT", "/caso/id/999999999", { Titulo: "x", idCliente: 1 }, token)).status, 404);
+  assert.equal((await req("PUT", "/caso/id/999999999", { Titulo: "x", idCliente }, token)).status, 404);
 
   const found = await req("GET", `/caso/buscar?searchBy=titulo&searchTerm=${titulo}`, undefined, token);
   assert.equal(found.body.payload.length, 1);
@@ -92,6 +96,39 @@ test("casos: requiere token y CRUD + búsqueda parametrizada", async () => {
 
   assert.equal((await req("DELETE", `/caso/id/${id}`, undefined, token)).status, 200);
   assert.equal((await req("GET", `/caso/id/${id}`, undefined, token)).status, 404);
+
+  await req("DELETE", `/cliente/id/${idCliente}`, undefined, token);
+  await req("DELETE", "/abogado", undefined, token);
+});
+
+test("clientes: requiere token, validación, CRUD y 409 con casos", async () => {
+  assert.equal((await req("GET", "/cliente")).status, 401);
+
+  const correo3 = `smoke-cli-${Date.now()}@test.com`;
+  const a = { ...abogado, correo: correo3 };
+  await req("POST", "/abogado", a);
+  const login = await req("POST", "/abogado/login", { correo: correo3, contraseña: a.contraseña });
+  const token = login.headers.get("auth-token");
+  const idAbogados = login.body.payload.idAbogados;
+
+  assert.equal((await req("POST", "/cliente", { Nombre: "x" }, token)).status, 400);
+  const nuevo = await req("POST", "/cliente", { Nombre: "n", apePat: "p", apeMat: "m" }, token);
+  assert.equal(nuevo.status, 201);
+  const id = nuevo.body.payload.idCliente;
+
+  assert.ok((await req("GET", "/cliente", undefined, token)).body.payload.some((c) => c.idCliente === id));
+  assert.equal((await req("GET", `/cliente/id/${id}`, undefined, token)).body.payload.Nombre, "n");
+  assert.equal((await req("GET", "/cliente/id/abc", undefined, token)).status, 400);
+  assert.equal((await req("GET", "/cliente/id/999999999", undefined, token)).status, 404);
+
+  const caso = await req("POST", "/caso", { Titulo: "t", idAbogados, idCliente: id }, token);
+  const del409 = await req("DELETE", `/cliente/id/${id}`, undefined, token);
+  assert.equal(del409.status, 409);
+  assert.equal(del409.body.error.code, "CLIENTE_HAS_CASOS");
+
+  await req("DELETE", `/caso/id/${caso.body.payload.idCasos}`, undefined, token);
+  assert.equal((await req("DELETE", `/cliente/id/${id}`, undefined, token)).status, 200);
+  assert.equal((await req("DELETE", `/cliente/id/${id}`, undefined, token)).status, 404);
 
   await req("DELETE", "/abogado", undefined, token);
 });
