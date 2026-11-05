@@ -10,10 +10,14 @@ import { AbogadoRepositoryImpl } from "./adapters/repository/abogadoRepositoryIm
 import GuardarAbogadoUseCase from "../application/guardarAbogadoUseCase.js";
 import AutenticarAbogadoUseCase from "../application/autenticarAbogadoUseCase.js";
 import { BorrarAbogadoUseCase } from "../application/borrarAbogadoUseCase.js";
+import ObtenerAbogadoPorIdUseCase from "../application/obtenerAbogadoPorIdUseCase.js";
+import { GetAllAbogadosUseCase } from "../application/getAllAbogadosUseCase.js";
 
 import GuardarAbogadoController from "./http/controllers/guardarAbogadoController.js";
 import { AutenticarAbogadoController } from "./http/controllers/autenticarAbogadoController.js";
 import { BorrarAbogadoController } from "./http/controllers/borrarAbogadoController.js";
+import ObtenerAbogadoPorIdController from "./http/controllers/obtenerAbogadoPorIdController.js";
+import GetAllAbogadosController from "./http/controllers/getAllAbogadosController.js";
 
 import PasswordServiceImpl from "./adapters/services/passwordServiceImpl.js";
 
@@ -29,14 +33,20 @@ export function createAbogadoControllers(dbconn, tokenservice) {
     const guardarAbogadoUseCase = new GuardarAbogadoUseCase(abogadoRepository, passwordService);
     const autenticarAbogadoUseCase = new AutenticarAbogadoUseCase(abogadoRepository, passwordService);
     const borrarAbogadoUseCase = new BorrarAbogadoUseCase(abogadoRepository);
+    const obtenerAbogadoPorIdUseCase = new ObtenerAbogadoPorIdUseCase(abogadoRepository);
+    const getAllAbogadosUseCase = new GetAllAbogadosUseCase(abogadoRepository);
 
     const guardarAbogadoController = new GuardarAbogadoController(guardarAbogadoUseCase);
     const autenticarAbogadoController = new AutenticarAbogadoController(autenticarAbogadoUseCase, tokenservice);
     const borrarAbogadoController = new BorrarAbogadoController(borrarAbogadoUseCase);
+    const obtenerAbogadoPorIdController = new ObtenerAbogadoPorIdController(obtenerAbogadoPorIdUseCase);
+    const getAllAbogadosController = new GetAllAbogadosController(getAllAbogadosUseCase);
 
     return {
         guardarAbogadoController,
         autenticarAbogadoController,
-        borrarAbogadoController
+        borrarAbogadoController,
+        obtenerAbogadoPorIdController,
+        getAllAbogadosController
     }
 }

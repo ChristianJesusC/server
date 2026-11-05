@@ -60,4 +60,27 @@ export class AbogadoRepositoryImpl {
             throw new InfrastructureError(err, "MYSQL");
         }
     }
+
+    /**
+     * @param {number} id
+     */
+    async getAbogadoById(id) {
+        try {
+            const sql = "SELECT * FROM abogados WHERE idAbogados = ?";
+            const [rows] = /** @type {[Abogado[], any]} */ (await this.dbconn.execute(sql, [id]));
+            return rows[0] ?? null;
+        } catch (err) {
+            throw new InfrastructureError(err, "MYSQL");
+        }
+    }
+
+    async getAllAbogados() {
+        try {
+            const sql = "SELECT * FROM abogados";
+            const [rows] = await this.dbconn.execute(sql);
+            return /** @type {Required<Abogado>[]} */ (rows) ?? [];
+        } catch (err) {
+            throw new InfrastructureError(err, "MYSQL");
+        }
+    }
 }

@@ -12,6 +12,8 @@ declare namespace AbogadosDomain {
     interface Repository {
         saveNewAbogado(abogado: Required<Abogado>): Promise<void>;
         getAbogadoByEmail(email: string): Promise<Abogado | null>;
+        getAbogadoById(id: number): Promise<Abogado | null>;
         deleteById(id: number): Promise<void>;
+        getAllAbogados(): Promise<Required<Abogado>[]>;
     }
 }

@@ -40,7 +40,10 @@ initializeDatabase().then((dbconn) => {
 
     const abogadoRouter = createAbogadoRouter({
         guardarAbogadoController: abogadoControllers.guardarAbogadoController,
-        autenticarAbogadoController: abogadoControllers.autenticarAbogadoController
+        autenticarAbogadoController: abogadoControllers.autenticarAbogadoController,
+        getAllAbogadosController: abogadoControllers.getAllAbogadosController,
+        borrarAbogadoController: abogadoControllers.borrarAbogadoController,
+        obtenerAbogadoPorIdController: abogadoControllers.obtenerAbogadoPorIdController
     }, authMiddleware);
 
     app.use("/abogado", abogadoRouter);
