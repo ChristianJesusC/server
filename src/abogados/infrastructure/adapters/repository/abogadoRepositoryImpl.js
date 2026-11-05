@@ -56,10 +56,8 @@ export class AbogadoRepositoryImpl {
             const conn = await this.dbconn.getConnection();
             try {
                 await conn.beginTransaction();
-                // ponytail: mover al dominio casos cuando se modularice; tolera que la tabla aún no exista
-                await conn.execute("UPDATE Casos SET idAbogados = 0 WHERE idAbogados = ?", [id]).catch((/** @type {any} */ e) => {
-                    if (e.code !== "ER_NO_SUCH_TABLE") throw e;
-                });
+                // acoplamiento con el dominio casos: los casos del abogado quedan huérfanos (idAbogados = 0)
+                await conn.execute("UPDATE Casos SET idAbogados = 0 WHERE idAbogados = ?", [id]);
                 const [res] = /** @type {[any, any]} */ (await conn.execute("DELETE FROM abogados WHERE idAbogados = ?", [id]));
                 await conn.commit();
                 return res.affectedRows > 0;

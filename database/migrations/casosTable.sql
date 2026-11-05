@@ -1,0 +1,21 @@
+CREATE TABLE IF NOT EXISTS Casos (
+    idCasos INT AUTO_INCREMENT PRIMARY KEY,
+    Titulo VARCHAR(255) NOT NULL,
+    Subtitulo VARCHAR(255) DEFAULT NULL,
+    TipoJuicio VARCHAR(255) DEFAULT NULL,
+    EstadoExpediente VARCHAR(255) DEFAULT NULL,
+    PrimerLugar VARCHAR(255) DEFAULT NULL,
+    PrimeraFecha VARCHAR(255) DEFAULT NULL,
+    SegundoLugar VARCHAR(255) DEFAULT NULL,
+    SegundaFecha VARCHAR(255) DEFAULT NULL,
+    Descripcion TEXT DEFAULT NULL,
+    idAbogados INT NOT NULL,
+    idCliente INT NOT NULL,
+    fechaRegistro VARCHAR(255) DEFAULT NULL,
+    PrimeraFirma VARCHAR(255) DEFAULT NULL,
+    SegundaFirma VARCHAR(255) DEFAULT NULL,
+    TerceraFirma VARCHAR(255) DEFAULT NULL,
+    CuartaFirma VARCHAR(255) DEFAULT NULL,
+    KEY idx_casos_abogado (idAbogados),
+    KEY idx_casos_cliente (idCliente)
+)

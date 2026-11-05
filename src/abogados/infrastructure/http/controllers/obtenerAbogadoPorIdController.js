@@ -6,7 +6,7 @@
  * @typedef {import('../../../application/obtenerAbogadoPorIdUseCase').default} ObtenerAbogadoPorIdUseCase
  */
 
-import { ValidationError } from '../../../../../core/errors/appError.js';
+import { parseIdParam } from '../../../../../core/http/parseIdParam.js';
 
 /**
  * @implements {Controller}
@@ -24,10 +24,7 @@ export default class ObtenerAbogadoPorIdController {
      * @param {Response} res 
      */
     async run(req, res) {
-        const id = Number(req.params.id);
-        if (!Number.isInteger(id) || id <= 0) {
-            throw new ValidationError("id inválido", [{ field: "id", issue: "invalid" }]);
-        }
+        const id = parseIdParam(req.params.id);
         const abogado = await this.usecase.run(id);
         res.status(200).send({
             message: "lawyer has been fetched successfully",

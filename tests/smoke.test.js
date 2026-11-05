@@ -58,3 +58,40 @@ test("registro -> duplicado 409 -> login -> listar/obtener sin contraseña -> bo
   assert.equal((await req("DELETE", "/abogado", undefined, token)).status, 200);
   assert.equal((await req("POST", "/abogado/login", { correo, contraseña: abogado.contraseña })).status, 401);
 });
+
+test("casos: requiere token y CRUD + búsqueda parametrizada", async () => {
+  assert.equal((await req("GET", "/caso")).status, 401);
+
+  const correo2 = `smoke-caso-${Date.now()}@test.com`;
+  const a = { ...abogado, correo: correo2 };
+  await req("POST", "/abogado", a);
+  const login = await req("POST", "/abogado/login", { correo: correo2, contraseña: a.contraseña });
+  const token = login.headers.get("auth-token");
+  const idAbogados = login.body.payload.idAbogados;
+
+  assert.equal((await req("POST", "/caso", { idAbogados, idCliente: 1 }, token)).status, 400);
+
+  const titulo = `smoke-caso-${Date.now()}`;
+  const nuevo = await req("POST", "/caso", { Titulo: titulo, idAbogados, idCliente: 1, Descripcion: "d" }, token);
+  assert.equal(nuevo.status, 201);
+  const id = nuevo.body.payload.idCasos;
+
+  assert.equal((await req("GET", `/caso/id/${id}`, undefined, token)).body.payload.Titulo, titulo);
+  assert.equal((await req("GET", "/caso/id/abc", undefined, token)).status, 400);
+
+  const upd = await req("PUT", `/caso/id/${id}`, { Titulo: `${titulo}-mod`, idCliente: 1 }, token);
+  assert.equal(upd.status, 200);
+  assert.equal((await req("PUT", "/caso/id/999999999", { Titulo: "x", idCliente: 1 }, token)).status, 404);
+
+  const found = await req("GET", `/caso/buscar?searchBy=titulo&searchTerm=${titulo}`, undefined, token);
+  assert.equal(found.body.payload.length, 1);
+  const inj = await req("GET", `/caso/buscar?searchBy=titulo&searchTerm=${encodeURIComponent("' OR '1'='1")}`, undefined, token);
+  assert.equal(inj.status, 200);
+  assert.equal(inj.body.payload.length, 0);
+  assert.equal((await req("GET", "/caso/buscar?searchBy=otro&searchTerm=x", undefined, token)).status, 400);
+
+  assert.equal((await req("DELETE", `/caso/id/${id}`, undefined, token)).status, 200);
+  assert.equal((await req("GET", `/caso/id/${id}`, undefined, token)).status, 404);
+
+  await req("DELETE", "/abogado", undefined, token);
+});

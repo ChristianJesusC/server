@@ -7,6 +7,10 @@ const abogadosMigration = fs.readFileSync(path.resolve(migrationspath, "abogados
     encoding: "utf-8"
 });
 
+const casosMigration = fs.readFileSync(path.resolve(migrationspath, "casosTable.sql"), {
+    encoding: "utf-8"
+});
+
 export async function initializeDatabase() {
     const dbconnection = await mysql2.createPool({
         host: process.env.DB_HOST,
@@ -20,6 +24,9 @@ export async function initializeDatabase() {
     await dbconnection.execute("ALTER TABLE abogados MODIFY idAbogados INT NOT NULL AUTO_INCREMENT");
     await dbconnection.execute("ALTER TABLE abogados ADD UNIQUE KEY uq_abogados_correo (correo)")
         .catch((/** @type {any} */ e) => { if (e.code !== "ER_DUP_KEYNAME") throw e; });
+
+    await dbconnection.execute(casosMigration);
+    await dbconnection.execute("ALTER TABLE Casos MODIFY idCasos INT NOT NULL AUTO_INCREMENT");
 
     return dbconnection;
 }
