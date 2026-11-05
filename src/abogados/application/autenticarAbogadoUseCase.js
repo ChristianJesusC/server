@@ -3,7 +3,7 @@
  */
 import { AbogadoRepository } from "../domain/abogadoRepository.js";
 import { PasswordService } from "./services/passwordService.js";
-import errorCodes from "./errorCodes.js";
+import { IncompleteLawyerError, InvalidCredentialsError } from "../domain/errors.js";
 
 export default class AutenticarAbogadoUseCase {
     /**
@@ -18,19 +18,18 @@ export default class AutenticarAbogadoUseCase {
     /**
      * @param {string?} email 
      * @param {string?} password 
+     * @returns {Promise<Abogado>}
      */
     async run(email, password) {
-        if ((!email || email === "") || (!password || password === "")) {
-            throw new Error("Incomplete lawyer info", {
-                cause: { origin: "USECASE", code: errorCodes.INCOMPLETE_LAWYER }
-            });
+        const missing = [["correo", email], ["contraseña", password]]
+            .filter(([, v]) => typeof v !== "string" || v === "").map(([k]) => k);
+        if (missing.length) throw new IncompleteLawyerError(missing);
+
+        // mismo error para correo inexistente y contraseña incorrecta (evita enumerar usuarios)
+        const abogado = await this.repository.getAbogadoByEmail(/** @type {string} */ (email));
+        if (!abogado || !(await this.passwordService.checkPassword(/** @type {string} */ (password), abogado.contraseña))) {
+            throw new InvalidCredentialsError();
         }
-        const possibleAbogado = await this.repository.getAbogadoByEmail(email);
-        const valid = await this.passwordService.checkPassword(password, possibleAbogado.contraseña);
-        if (valid) {
-            return possibleAbogado;
-        } else {
-            return null;
-        }
+        return abogado;
     }
 }

@@ -2,6 +2,8 @@
 /** @typedef {import('../../../domain/abogado').Abogado} Abogado */
 /** @typedef {import('mysql2/promise').Connection} MySQLConnection */
 import { AbogadoRepository } from "../../../domain/abogadoRepository.js";
+import { InfrastructureError } from "../../../../../core/errors/appError.js";
+import { EmailAlreadyRegisteredError } from "../../../domain/errors.js";
 
 /**
  * @implements {AbogadoRepository}
@@ -26,23 +28,22 @@ export class AbogadoRepositoryImpl {
                 ]
             );
         } catch (/** @type {any} */ err) {
-            throw new Error(err.message, { cause: { origin: "REPOSITORY", dependency: "MYSQL" } });
+            if (err.code === "ER_DUP_ENTRY") throw new EmailAlreadyRegisteredError(err);
+            throw new InfrastructureError(err, "MYSQL");
         }
     }
 
     /**
      * @param {string} email 
-     * @returns {Promise<Abogado>}
+     * @returns {Promise<Abogado|null>}
      */
     async getAbogadoByEmail(email) {
-        const sql = "SELECT * FROM abogados WHERE correo = ?";
-        const [rows] = /** @type {[Abogado[], any]} */ (await this.dbconn.execute(sql, [email]));
-        if (rows[0]) {
-            return rows[0];
-        } else {
-            throw new Error("no se encontraron abogados con ese email", {
-                cause: { origin: "REPOSITORY" }
-            });
+        try {
+            const sql = "SELECT * FROM abogados WHERE correo = ?";
+            const [rows] = /** @type {[Abogado[], any]} */ (await this.dbconn.execute(sql, [email]));
+            return rows[0] ?? null;
+        } catch (err) {
+            throw new InfrastructureError(err, "MYSQL");
         }
     }
 }

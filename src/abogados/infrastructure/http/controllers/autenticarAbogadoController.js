@@ -28,16 +28,11 @@ export class AutenticarAbogadoController {
     async run(req, res) {
         const { correo, contraseña } = req.body;
         const abogado = await this.usecase.run(correo, contraseña);
-        if (abogado) {
-            const token = await this.tokenservice.generateToken(abogado);
-            res.setHeader("auth-token", token);
-            res.status(200).send({
-                message: "abogado autenticado con exito"
-            });
-        } else {
-            res.status(404).send({
-                message: "no se ha podido autenticar al abogado"
-            });
-        }
+        // payload mínimo: nunca firmar el hash de la contraseña dentro del JWT
+        const token = await this.tokenservice.generateToken({ idAbogados: abogado.idAbogados, correo: abogado.correo });
+        res.setHeader("auth-token", token);
+        res.status(200).send({
+            message: "abogado autenticado con exito"
+        });
     }
 }

@@ -14,7 +14,7 @@ export class AbogadoRepository {
 
     /**
      * @param {string} email
-     * @returns {Promise<Abogado>} 
+     * @returns {Promise<Abogado|null>} 
      */
     getAbogadoByEmail(email){}
 }

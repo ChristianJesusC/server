@@ -3,7 +3,9 @@
  */
 import { AbogadoRepository } from "../domain/abogadoRepository.js";
 import { PasswordService } from "./services/passwordService.js";
-import errorCodes from "./errorCodes.js";
+import { IncompleteLawyerError } from "../domain/errors.js";
+
+const REQUIRED = ["nombre", "apePat", "apeMat", "correo", "contraseña", "ocupacion"];
 
 export default class GuardarAbogadoUseCase {
     /**
@@ -19,14 +21,8 @@ export default class GuardarAbogadoUseCase {
      * @param {Partial<Abogado>} abogado 
      */
     async run(abogado) {
-        const { idAbogados, ...abogadoInfo } = abogado;
-        for (const value of Object.values(abogadoInfo)) {
-            if (!value || value === "") {
-                throw new Error("Recieved incomplete abogado info", {
-                    cause: { origin: "USECASE", code: errorCodes.INCOMPLETE_LAWYER }
-                });
-            }
-        }
+        const missing = REQUIRED.filter((f) => typeof abogado?.[f] !== "string" || abogado[f].trim() === "");
+        if (missing.length) throw new IncompleteLawyerError(missing);
         const safePassword = await this.passwordService.generateSafePassword(abogado.contraseña);
         abogado.contraseña = safePassword;
         await this.abogadoRepository.saveNewAbogado(abogado);

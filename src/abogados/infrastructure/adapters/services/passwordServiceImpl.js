@@ -1,6 +1,7 @@
 // @ts-check
 import { PasswordService } from "../../../application/services/passwordService.js";
 import argon2 from "argon2";
+import { InfrastructureError } from "../../../../../core/errors/appError.js";
 
 /**
  * @implements {PasswordService}
@@ -14,8 +15,8 @@ export default class PasswordServiceImpl {
         try {
             const match = await argon2.verify(storedPassword, password);
             return match;
-        } catch(error) {
-            return false;
+        } catch (error) {
+            throw new InfrastructureError(error, "ARGON2");
         }
     }
 
@@ -24,15 +25,15 @@ export default class PasswordServiceImpl {
      */
     async generateSafePassword(password) {
         try {
-            const safepsw = argon2.hash(password, {
+            const safepsw = await argon2.hash(password, {
                 type: argon2.argon2id,
                 memoryCost: 65536,
                 timeCost: 3,
                 parallelism: 4
             });
             return safepsw;
-        } catch(/** @type {any} */ error) {
-            throw new Error(error.message, { cause: { origin: "SERVICE", dependency: "ARGON2" } });
+        } catch (error) {
+            throw new InfrastructureError(error, "ARGON2");
         }
     }
 }

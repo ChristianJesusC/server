@@ -8,6 +8,7 @@
  */
 
 import { Router } from "express";
+import asyncHandler from "express-async-handler";
 /**
  * @param {Object<string, Controller>} controllers
  * @param {(req: Request, res: Response, next: NextFunction) => void} authMiddleware
@@ -18,13 +19,9 @@ export function createAbogadoRouter(
 ) {
     const router = Router();
 
-    router.post("/", (req, res) => {
-        controllers.guardarAbogadoController.run(req, res);
-    });
+    router.post("/", asyncHandler((req, res) => controllers.guardarAbogadoController.run(req, res)));
 
-    router.post("/login", (req, res) => {
-        controllers.autenticarAbogadoController.run(req, res);
-    });
+    router.post("/login", asyncHandler((req, res) => controllers.autenticarAbogadoController.run(req, res)));
 
     return router;
 }

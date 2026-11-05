@@ -1,5 +1,6 @@
 // @ts-check
 import jwt from "jsonwebtoken";
+import { InfrastructureError } from "../../../errors/appError.js";
 
 /**
  * @template T
@@ -16,10 +17,11 @@ export class TokenServiceImpl {
      * @param {Object} payload
      */
     async generateToken(payload) {
-        const token = jwt.sign(payload, jwt_secret, {
-            expiresIn: "1h"
-        });
-        return token;
+        try {
+            return jwt.sign(payload, jwt_secret, { expiresIn: "1h" });
+        } catch (error) {
+            throw new InfrastructureError(error, "JWT");
+        }
     }
 
     /**
