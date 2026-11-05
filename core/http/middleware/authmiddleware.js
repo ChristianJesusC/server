@@ -1,4 +1,5 @@
 // @ts-check
+import { AuthenticationError } from "../../errors/appError.js";
 /**
  * @typedef {import('express').Response} Response
  * @typedef {import('express').NextFunction} NextFunction
@@ -24,20 +25,10 @@ export class AuthMiddleware {
      * @param {NextFunction} next 
      */
     async run(req, res, next) {
-        const rawtoken = req.headers.authorization;
-        if (!rawtoken || rawtoken === "") {
-            res.status(401).send({
-                message: "no auth token was recieved"
-            });
-            return;
-        }
+        const rawtoken = req.headers.authorization?.replace(/^Bearer\s+/i, "");
+        if (!rawtoken) throw new AuthenticationError("AUTH_TOKEN_MISSING", "No se recibió token de autenticación");
         const parsedToken = await this.tokenservice.verifyToken(rawtoken);
-        if (!parsedToken.valid) {
-            res.status(401).send({
-                message: "invalid auth token"
-            });
-            return;
-        }
+        if (!parsedToken.valid) throw new AuthenticationError("AUTH_TOKEN_INVALID", "Token de autenticación inválido");
         const user = /** @type {UserInfo} */ (parsedToken.payload);
         req.meta.user.id = user.id;
         req.meta.user.email = user.email;

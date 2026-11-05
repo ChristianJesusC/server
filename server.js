@@ -2,6 +2,7 @@
 import express from "express";
 import cors from "cors";
 
+import { NotFoundError } from "./core/errors/appError.js";
 import { errorHandler } from "./core/http/errorHandler.js";
 import { initializeDatabase } from "./database/database.js";
 
@@ -17,13 +18,14 @@ if (!process.env.JWT_SECRET) {
 
 const app = express();
 
-app.use(express.json());
 app.use(cors({
     allowedHeaders: ["Content-Type", "Authorization"],
+    exposedHeaders: ["auth-token"],
     credentials: true,
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     origin: "*" //tmp
 }));
+app.use(express.json());
 
 app.use((req, res, next) => {
     const metarequest = /** @type {HTTP.MetaRequest} */ (req);
@@ -47,6 +49,8 @@ initializeDatabase().then((dbconn) => {
     }, authMiddleware);
 
     app.use("/abogado", abogadoRouter);
+
+    app.use((req, res, next) => next(new NotFoundError("ROUTE_NOT_FOUND", "Ruta no encontrada")));
 
     app.use(errorHandler); // siempre al final
 

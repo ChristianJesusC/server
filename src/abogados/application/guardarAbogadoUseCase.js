@@ -1,3 +1,4 @@
+// @ts-check
 /**
  * @typedef {AbogadosDomain.Abogado} Abogado
  * @typedef {AbogadosDomain.Repository} AbogadoRepository
@@ -23,8 +24,7 @@ export default class GuardarAbogadoUseCase {
     async run(abogado) {
         const missing = REQUIRED.filter((f) => typeof abogado?.[f] !== "string" || abogado[f].trim() === "");
         if (missing.length) throw new IncompleteLawyerError(missing);
-        const safePassword = await this.passwordService.generateSafePassword(abogado.contraseña);
-        abogado.contraseña = safePassword;
-        await this.abogadoRepository.saveNewAbogado(/** @type {Required<Abogado>} */ (abogado));
+        const safePassword = await this.passwordService.generateSafePassword(/** @type {string} */ (abogado.contraseña));
+        await this.abogadoRepository.saveNewAbogado(/** @type {Required<Omit<Abogado, "idAbogados">>} */ ({ ...abogado, contraseña: safePassword }));
     }
 }

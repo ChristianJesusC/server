@@ -27,7 +27,6 @@ export class AuthenticationError extends AppError { }
 export class ForbiddenError extends AppError { }
 export class NotFoundError extends AppError { }
 export class ConflictError extends AppError { }
-export class UnsafeResourceAccessError extends AppError { };
 
 /** Falla de una dependencia externa (BD, argon2, JWT). El mensaje real va en `cause`, nunca al cliente. */
 export class InfrastructureError extends AppError {

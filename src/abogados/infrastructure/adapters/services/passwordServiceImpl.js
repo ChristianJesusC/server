@@ -14,7 +14,9 @@ export default class PasswordServiceImpl {
         try {
             const match = await argon2.verify(storedPassword, password);
             return match;
-        } catch (error) {
+        } catch (/** @type {any} */ error) {
+            // hash con formato inválido (p. ej. contraseña legacy en texto plano): no coincide
+            if (error?.message?.includes("pchstr")) return false;
             throw new InfrastructureError(error, "ARGON2");
         }
     }

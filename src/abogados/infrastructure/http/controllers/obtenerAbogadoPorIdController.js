@@ -6,7 +6,7 @@
  * @typedef {import('../../../application/obtenerAbogadoPorIdUseCase').default} ObtenerAbogadoPorIdUseCase
  */
 
-import { ValidationError } from '../../../../../core/errors/appError';
+import { ValidationError } from '../../../../../core/errors/appError.js';
 
 /**
  * @implements {Controller}
@@ -24,9 +24,9 @@ export default class ObtenerAbogadoPorIdController {
      * @param {Response} res 
      */
     async run(req, res) {
-        const id = parseInt(/** @type {string} */ (req.params.id));
-        if (!id) {
-            throw new ValidationError("no id was recieved", ["id"]);
+        const id = Number(req.params.id);
+        if (!Number.isInteger(id) || id <= 0) {
+            throw new ValidationError("id inválido", [{ field: "id", issue: "invalid" }]);
         }
         const abogado = await this.usecase.run(id);
         res.status(200).send({

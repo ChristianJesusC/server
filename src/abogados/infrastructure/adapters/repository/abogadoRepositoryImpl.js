@@ -1,6 +1,7 @@
 // @ts-check
 /** @typedef {AbogadosDomain.Abogado} Abogado */
-/** @typedef {import('mysql2/promise').Connection} MySQLConnection */
+/** @typedef {import('mysql2/promise').Pool} MySQLConnection */
+const PUBLIC_COLS = "idAbogados, nombre, apePat, apeMat, correo, ocupacion"; // sin contraseña
 /** @typedef {AbogadosDomain.Repository} AbogadoRepository */
 import { InfrastructureError } from "../../../../../core/errors/appError.js";
 import { EmailAlreadyRegisteredError } from "../../../domain/errors.js";
@@ -17,7 +18,7 @@ export class AbogadoRepositoryImpl {
     }
 
     /**
-     * @param {Required<Abogado>} abogado 
+     * @param {Required<Omit<Abogado, "idAbogados">>} abogado 
      */
     async saveNewAbogado(abogado) {
         try {
@@ -52,10 +53,22 @@ export class AbogadoRepositoryImpl {
      */
     async deleteById(id) {
         try {
-            const updateCasosSql = "UPDATE Casos SET idAbogados = 0 WHERE idAbogados = ?";
-            const deleteAbogadoSql = "DELETE FROM abogados WHERE idAbogados = ?";
-            await this.dbconn.execute(updateCasosSql, [id]);
-            await this.dbconn.execute(deleteAbogadoSql, [id]);
+            const conn = await this.dbconn.getConnection();
+            try {
+                await conn.beginTransaction();
+                // ponytail: mover al dominio casos cuando se modularice; tolera que la tabla aún no exista
+                await conn.execute("UPDATE Casos SET idAbogados = 0 WHERE idAbogados = ?", [id]).catch((/** @type {any} */ e) => {
+                    if (e.code !== "ER_NO_SUCH_TABLE") throw e;
+                });
+                const [res] = /** @type {[any, any]} */ (await conn.execute("DELETE FROM abogados WHERE idAbogados = ?", [id]));
+                await conn.commit();
+                return res.affectedRows > 0;
+            } catch (err) {
+                await conn.rollback();
+                throw err;
+            } finally {
+                conn.release();
+            }
         } catch (err) {
             throw new InfrastructureError(err, "MYSQL");
         }
@@ -66,7 +79,7 @@ export class AbogadoRepositoryImpl {
      */
     async getAbogadoById(id) {
         try {
-            const sql = "SELECT * FROM abogados WHERE idAbogados = ?";
+            const sql = `SELECT ${PUBLIC_COLS} FROM abogados WHERE idAbogados = ?`;
             const [rows] = /** @type {[Abogado[], any]} */ (await this.dbconn.execute(sql, [id]));
             return rows[0] ?? null;
         } catch (err) {
@@ -76,9 +89,9 @@ export class AbogadoRepositoryImpl {
 
     async getAllAbogados() {
         try {
-            const sql = "SELECT * FROM abogados";
+            const sql = `SELECT ${PUBLIC_COLS} FROM abogados`;
             const [rows] = await this.dbconn.execute(sql);
-            return /** @type {Required<Abogado>[]} */ (rows) ?? [];
+            return /** @type {Abogado[]} */ (rows);
         } catch (err) {
             throw new InfrastructureError(err, "MYSQL");
         }

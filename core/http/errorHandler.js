@@ -26,6 +26,11 @@ export function errorHandler(err, req, res, next) {
         err = new ValidationError("El cuerpo de la petición no es JSON válido");
     }
 
+    // otros errores de body-parser (413, charset...) traen status 4xx
+    if (err?.status >= 400 && err.status < 500 && !(err instanceof AppError)) {
+        return res.status(err.status).send({ error: { code: "BAD_REQUEST", message: "Petición inválida", details: [] } });
+    }
+
     if (err instanceof AppError) {
         const status = STATUS_BY_CLASS.find(([cls]) => err instanceof cls)?.[1] ?? 500;
         if (status >= 500) console.error(err, err.cause);

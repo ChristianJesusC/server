@@ -35,7 +35,11 @@ export class AutenticarAbogadoController {
         });
         res.setHeader("auth-token", token);
         res.status(200).send({
-            message: "abogado autenticado con exito"
+            message: "abogado autenticado con exito",
+            payload: {
+                idAbogados: abogado.idAbogados, nombre: abogado.nombre, apePat: abogado.apePat,
+                apeMat: abogado.apeMat, ocupacion: abogado.ocupacion
+            }
         });
     }
 }

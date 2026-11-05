@@ -8,7 +8,7 @@ const abogadosMigration = fs.readFileSync(path.resolve(migrationspath, "abogados
 });
 
 export async function initializeDatabase() {
-    const dbconnection = await mysql2.createConnection({
+    const dbconnection = await mysql2.createPool({
         host: process.env.DB_HOST,
         user: process.env.DB_USER,
         password: process.env.DB_PASSWORD,
@@ -16,6 +16,10 @@ export async function initializeDatabase() {
     });
 
     await dbconnection.execute(abogadosMigration);
+    // BD creada con el esquema viejo (sin AUTO_INCREMENT ni UNIQUE): idempotente
+    await dbconnection.execute("ALTER TABLE abogados MODIFY idAbogados INT NOT NULL AUTO_INCREMENT");
+    await dbconnection.execute("ALTER TABLE abogados ADD UNIQUE KEY uq_abogados_correo (correo)")
+        .catch((/** @type {any} */ e) => { if (e.code !== "ER_DUP_KEYNAME") throw e; });
 
     return dbconnection;
 }

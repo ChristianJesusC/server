@@ -4,6 +4,8 @@
  * @typedef {AbogadosDomain.Repository} AbogadoRepository
  */
 
+import { NotFoundError } from "../../../core/errors/appError.js";
+
 export class BorrarAbogadoUseCase {
     /**
      * @param {AbogadoRepository} repository 
@@ -16,6 +18,8 @@ export class BorrarAbogadoUseCase {
      * @param {number} id 
      */
     async run(id) {
-        await this.repository.deleteById(id);
+        if (!(await this.repository.deleteById(id))) {
+            throw new NotFoundError("LAWYER_NOT_FOUND", "No existe un abogado con id " + id, { details: [{ field: "id", issue: "not_found" }] });
+        }
     }
 }

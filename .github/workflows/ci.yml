@@ -70,7 +70,7 @@ jobs:
       - name: Levantar la API
         run: |
           node server.js &
-          for i in $(seq 30); do curl -sf localhost:8000/abogados >/dev/null && exit 0; sleep 1; done
+          for i in $(seq 30); do curl -s -o /dev/null localhost:8000/abogado && exit 0; sleep 1; done
           exit 1
 
       - name: Tests de humo

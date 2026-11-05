@@ -5,7 +5,7 @@
  * @typedef {HTTP.HTTPController} Controller
  */
 
-import { BorrarAbogadoUseCase } from '../../../application/borrarAbogadoUseCase';
+import { BorrarAbogadoUseCase } from '../../../application/borrarAbogadoUseCase.js';
 
 /**
  * @implements {Controller}

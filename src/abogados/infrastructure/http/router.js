@@ -17,15 +17,16 @@ export function createAbogadoRouter(
     authMiddleware
 ) {
     const router = Router();
+    const auth = asyncHandler(authMiddleware.run.bind(authMiddleware));
 
     router.post("/", asyncHandler((req, res) => controllers.guardarAbogadoController.run(req, res)));
 
     router.post("/login", asyncHandler((req, res) => controllers.autenticarAbogadoController.run(req, res)));
     
-    router.delete("/", authMiddleware.run, asyncHandler((req, res) => controllers.borrarAbogadoController.run(req, res)));
+    router.delete("/", auth, asyncHandler((req, res) => controllers.borrarAbogadoController.run(req, res)));
 
-    router.get("/id/:id", authMiddleware.run, asyncHandler((req, res) => controllers.obtenerAbogadoPorIdController.run(req, res)));
+    router.get("/id/:id", auth, asyncHandler((req, res) => controllers.obtenerAbogadoPorIdController.run(req, res)));
 
-    router.get("/", authMiddleware.run, asyncHandler((req, res) => controllers.getAllAbogadosController.run(req, res)));
+    router.get("/", auth, asyncHandler((req, res) => controllers.getAllAbogadosController.run(req, res)));
     return router;
 }

@@ -30,7 +30,7 @@ export class TokenServiceImpl {
      */
     async verifyToken(token) {
         try {
-            const payload = jwt.verify(token, jwt_secret);
+            const payload = jwt.verify(token, jwt_secret, { algorithms: ["HS256"] });
             
             return {
                 valid: true,

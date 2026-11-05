@@ -1,6 +1,6 @@
 //@ts-check
 /** 
- * @typedef {import("mysql2/promise").Connection} MySQLConnection 
+ * @typedef {import("mysql2/promise").Pool} MySQLConnection 
  * @typedef {HTTP.HTTPController} Controller
  * @typedef {Services.Token.TokenService} TokenService
 */
